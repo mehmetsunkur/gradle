@@ -57,4 +57,14 @@ public interface FileSystemOperations {
      * @return {@link WorkResult} that can be used to check if delete did any work.
      */
     WorkResult delete(Action<? super DeleteSpec> action);
+
+    /**
+     * Creates a directory.
+     *
+     * @param directory the directory to create
+     * @return the created directory
+     *
+     * @since 6.3
+     */
+    Directory mkdir(Directory directory);
 }

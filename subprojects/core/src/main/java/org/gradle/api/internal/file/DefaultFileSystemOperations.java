@@ -19,6 +19,7 @@ package org.gradle.api.internal.file;
 import org.gradle.api.Action;
 import org.gradle.api.file.CopySpec;
 import org.gradle.api.file.DeleteSpec;
+import org.gradle.api.file.Directory;
 import org.gradle.api.file.FileSystemOperations;
 import org.gradle.api.tasks.WorkResult;
 
@@ -44,5 +45,11 @@ public class DefaultFileSystemOperations implements FileSystemOperations {
     @Override
     public WorkResult delete(Action<? super DeleteSpec> action) {
         return fileOperations.delete(action);
+    }
+
+    @Override
+    public Directory mkdir(Directory directory) {
+        fileOperations.mkdir(directory.getAsFile());
+        return directory;
     }
 }
