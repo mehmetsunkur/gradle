@@ -47,6 +47,8 @@ public class JacocoReport extends JacocoReportBase implements Reporting<JacocoRe
     }
 
     /**
+     * The reported project name.
+     *
      * @return the reported project name
      * @since 6.3
      */
