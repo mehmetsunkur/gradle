@@ -21,6 +21,7 @@ import org.gradle.api.UncheckedIOException;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.file.FileTree;
 import org.gradle.api.internal.ClassPathRegistry;
+import org.gradle.api.internal.file.FileOperations;
 import org.gradle.api.internal.project.IsolatedAntBuilder;
 import org.gradle.api.internal.tasks.AntGroovydoc;
 import org.gradle.api.logging.LogLevel;
@@ -105,9 +106,12 @@ public class Groovydoc extends SourceTask {
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
-        getAntGroovydoc().execute(getSource(), destinationDir, isUse(), isNoTimestamp(), isNoVersionStamp(), getWindowTitle(),
-                getDocTitle(), getHeader(), getFooter(), getPathToOverview(), isIncludePrivate(), getLinks(), getGroovyClasspath(),
-                getClasspath(), getProject());
+        getAntGroovydoc().execute(
+            getSource(), destinationDir, isUse(), isNoTimestamp(), isNoVersionStamp(),
+            getWindowTitle(), getDocTitle(), getHeader(), getFooter(), getPathToOverview(), isIncludePrivate(),
+            getLinks(), getGroovyClasspath(), getClasspath(),
+            getTemporaryDir(), getServices().get(FileOperations.class)
+        );
     }
 
     @Nullable
