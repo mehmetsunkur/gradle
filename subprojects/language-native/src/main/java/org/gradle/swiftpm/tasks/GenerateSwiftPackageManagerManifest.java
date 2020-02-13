@@ -50,11 +50,13 @@ import java.util.TreeSet;
  */
 public class GenerateSwiftPackageManagerManifest extends DefaultTask {
     private final RegularFileProperty manifestFile;
+    private final String packageName;
     private final Property<Package> packageProperty;
 
     public GenerateSwiftPackageManagerManifest() {
         ObjectFactory objectFactory = getProject().getObjects();
         manifestFile = objectFactory.fileProperty();
+        packageName = getProject().getName();
         packageProperty = objectFactory.property(Package.class);
     }
 
@@ -84,7 +86,7 @@ public class GenerateSwiftPackageManagerManifest extends DefaultTask {
                 writer.println("import PackageDescription");
                 writer.println();
                 writer.println("let package = Package(");
-                writer.println("    name: \"" + getProject().getName() + "\",");
+                writer.println("    name: \"" + packageName + "\",");
                 writer.println("    products: [");
                 for (AbstractProduct product : srcPackage.getProducts()) {
                     if (product.isExecutable()) {
@@ -124,13 +126,13 @@ public class GenerateSwiftPackageManagerManifest extends DefaultTask {
                                 writer.print("from: \"");
                                 writer.print(versionDependency.getLowerBound());
                                 writer.print("\"");
-                            } else if (versionDependency.isUpperInclusive()){
+                            } else if (versionDependency.isUpperInclusive()) {
                                 writer.print("\"");
                                 writer.print(versionDependency.getLowerBound());
                                 writer.print("\"...\"");
                                 writer.print(versionDependency.getUpperBound());
                                 writer.print("\"");
-                            }  else {
+                            } else {
                                 writer.print("\"");
                                 writer.print(versionDependency.getLowerBound());
                                 writer.print("\"..<\"");
