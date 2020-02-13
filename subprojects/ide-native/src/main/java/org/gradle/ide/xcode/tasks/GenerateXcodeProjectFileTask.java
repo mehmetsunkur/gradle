@@ -74,6 +74,7 @@ public class GenerateXcodeProjectFileTask extends PropertyListGeneratorTask<Xcod
     private final GidGenerator gidGenerator;
     private DefaultXcodeProject xcodeProject;
     private Map<String, PBXFileReference> pathToFileReference = new HashMap<String, PBXFileReference>();
+    private final String projectPath = getProject().getPath();
 
     @Inject
     public GenerateXcodeProjectFileTask(GidGenerator gidGenerator) {
@@ -82,7 +83,7 @@ public class GenerateXcodeProjectFileTask extends PropertyListGeneratorTask<Xcod
 
     @Override
     protected void configure(XcodeProjectFile projectFile) {
-        PBXProject project = new PBXProject(getProject().getPath());
+        PBXProject project = new PBXProject(projectPath);
 
         addToGroup(project.getMainGroup(), xcodeProject.getGroups().getSources(), "Sources");
         addToGroup(project.getMainGroup(), xcodeProject.getGroups().getHeaders(), "Headers");
