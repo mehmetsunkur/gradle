@@ -20,7 +20,10 @@ import groovy.lang.Closure;
 import org.gradle.api.Action;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.file.FileTree;
+import org.gradle.api.file.ProjectLayout;
+import org.gradle.api.internal.file.FileOperations;
 import org.gradle.api.logging.LogLevel;
+import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.tasks.Classpath;
 import org.gradle.api.tasks.InputFiles;
 import org.gradle.api.tasks.Nested;
@@ -44,6 +47,7 @@ public class CoffeeScriptCompile extends SourceTask {
     private Object destinationDir;
     private Object rhinoClasspath;
     private CoffeeScriptCompileOptions options = new CoffeeScriptCompileOptions();
+    private LogLevel logLevel = getProject().getGradle().getStartParameter().getLogLevel();
 
     @Inject
     protected WorkerProcessFactory getWorkerProcessBuilderFactory() {
@@ -62,7 +66,7 @@ public class CoffeeScriptCompile extends SourceTask {
     @PathSensitive(PathSensitivity.RELATIVE)
     @InputFiles
     public FileCollection getCoffeeScriptJs() {
-        return getProject().files(coffeeScriptJs);
+        return getServices().get(ObjectFactory.class).fileCollection().from(coffeeScriptJs);
     }
 
     /**
@@ -80,7 +84,7 @@ public class CoffeeScriptCompile extends SourceTask {
 
     @Classpath
     public FileCollection getRhinoClasspath() {
-        return getProject().files(rhinoClasspath);
+        return getServices().get(ObjectFactory.class).fileCollection().from(rhinoClasspath);
     }
 
     /**
@@ -98,7 +102,7 @@ public class CoffeeScriptCompile extends SourceTask {
 
     @OutputDirectory
     public File getDestinationDir() {
-        return getProject().file(destinationDir);
+        return getServices().get(FileOperations.class).file(destinationDir);
     }
 
     /**
@@ -137,8 +141,8 @@ public class CoffeeScriptCompile extends SourceTask {
         spec.setSource(getSource());
         spec.setOptions(getOptions());
 
-        LogLevel logLevel = getProject().getGradle().getStartParameter().getLogLevel();
-        CoffeeScriptCompiler compiler = new RhinoCoffeeScriptCompiler(handleFactory, getRhinoClasspath(), logLevel, getProject().getProjectDir());
+        File projectDir = getServices().get(ProjectLayout.class).getProjectDirectory().getAsFile();
+        CoffeeScriptCompiler compiler = new RhinoCoffeeScriptCompiler(handleFactory, getRhinoClasspath(), logLevel, projectDir);
 
         setDidWork(compiler.compile(spec).getDidWork());
     }
