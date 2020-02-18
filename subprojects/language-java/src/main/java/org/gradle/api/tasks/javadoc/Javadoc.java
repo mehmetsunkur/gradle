@@ -353,7 +353,9 @@ public class Javadoc extends SourceTask {
      *
      * @return The executable. May be null.
      */
-    @Nullable @Optional @Input
+    @Nullable
+    @Optional
+    @Input
     public String getExecutable() {
         return executable;
     }

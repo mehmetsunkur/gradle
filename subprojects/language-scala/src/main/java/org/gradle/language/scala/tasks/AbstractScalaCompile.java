@@ -197,13 +197,12 @@ public abstract class AbstractScalaCompile extends AbstractCompile {
     /**
      * Source of analysis mapping files for incremental Scala compilation.
      * <p>
-     *     An analysis mapping file is produced by each {@code AbstractScalaCompile} task. This file contains paths to the jar containing
-     *     compiled Scala classes and the Scala compiler analysis file for that jar. The Scala compiler uses this information to perform
-     *     incremental compilation of Scala sources.
+     * An analysis mapping file is produced by each {@code AbstractScalaCompile} task. This file contains paths to the jar containing
+     * compiled Scala classes and the Scala compiler analysis file for that jar. The Scala compiler uses this information to perform
+     * incremental compilation of Scala sources.
      * </p>
      *
      * @return collection of analysis mapping files.
-     *
      * @since 4.10.1
      */
     @Internal
@@ -215,7 +214,6 @@ public abstract class AbstractScalaCompile extends AbstractCompile {
      * Analysis mapping file.
      *
      * @see #getAnalysisFiles()
-     *
      * @since 4.10.1
      */
     @LocalState

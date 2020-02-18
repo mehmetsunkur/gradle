@@ -112,7 +112,7 @@ public class HtmlDependencyReportTask extends ConventionTask implements Reportin
     }
 
     @Inject
-    protected  VersionParser getVersionParser() {
+    protected VersionParser getVersionParser() {
         throw new UnsupportedOperationException();
     }
 

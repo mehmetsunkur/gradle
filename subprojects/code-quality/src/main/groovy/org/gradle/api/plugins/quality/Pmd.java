@@ -292,8 +292,8 @@ public class Pmd extends SourceTask implements VerificationTask, Reporting<PmdRe
     /**
      * Specifies the rule priority threshold.
      *
-     * @since 2.8
      * @see PmdExtension#getRulePriority()
+     * @since 2.8
      */
     @Input
     public int getRulePriority() {

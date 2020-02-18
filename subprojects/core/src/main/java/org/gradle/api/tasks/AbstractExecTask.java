@@ -368,7 +368,6 @@ public abstract class AbstractExecTask<T extends AbstractExecTask> extends Conve
      * Returns the result for the command run by this task. Returns {@code null} if this task has not been executed yet.
      *
      * @return The result. Returns {@code null} if this task has not been executed yet.
-     *
      * @see #getExecutionResult() for the preferred way of accessing this property.
      */
     @Internal

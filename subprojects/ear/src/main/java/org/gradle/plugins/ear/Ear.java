@@ -70,7 +70,7 @@ public class Ear extends Jar {
             (Callable<String>) () -> GUtil.elvis(getLibDirName(), DEFAULT_LIB_DIR_NAME)
         );
         getMainSpec().appendCachingSafeCopyAction(details -> {
-                if(generateDeploymentDescriptor.get()) {
+                if (generateDeploymentDescriptor.get()) {
                     checkIfShouldGenerateDeploymentDescriptor(details);
                     recordTopLevelModules(details);
                 }
@@ -83,17 +83,17 @@ public class Ear extends Jar {
         CopySpecInternal descriptorChild = metaInf.addChild();
         OutputChangeListener outputChangeListener = getServices().get(OutputChangeListener.class);
         descriptorChild.from((Callable<FileTreeAdapter>) () -> {
-                final DeploymentDescriptor descriptor = getDeploymentDescriptor();
+            final DeploymentDescriptor descriptor = getDeploymentDescriptor();
 
-                if (descriptor != null && generateDeploymentDescriptor.get()) {
-                    if (descriptor.getLibraryDirectory() == null) {
-                        descriptor.setLibraryDirectory(getLibDirName());
-                    }
+            if (descriptor != null && generateDeploymentDescriptor.get()) {
+                if (descriptor.getLibraryDirectory() == null) {
+                    descriptor.setLibraryDirectory(getLibDirName());
+                }
 
                 String descriptorFileName = descriptor.getFileName();
                 if (descriptorFileName.contains("/") || descriptorFileName.contains(File.separator)) {
                     throw new InvalidUserDataException("Deployment descriptor file name must be a simple name but was " + descriptorFileName);
-                    }
+                }
                 GeneratedSingletonFileTree descriptorSource = new GeneratedSingletonFileTree(
                     getTemporaryDirFactory(),
                     descriptorFileName,
@@ -102,10 +102,10 @@ public class Ear extends Jar {
                 );
 
 
-                    return new FileTreeAdapter(descriptorSource);
-                }
+                return new FileTreeAdapter(descriptorSource);
+            }
 
-                return null;
+            return null;
         });
     }
 
