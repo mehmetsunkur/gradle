@@ -195,6 +195,11 @@ public class AntlrTask extends SourceTask {
         throw new UnsupportedOperationException();
     }
 
+    @Inject
+    protected ProjectLayout getProjectLayout() {
+        throw new UnsupportedOperationException();
+    }
+
     /**
      * Generate the parsers.
      *
@@ -230,7 +235,7 @@ public class AntlrTask extends SourceTask {
 
         AntlrWorkerManager manager = new AntlrWorkerManager();
         AntlrSpec spec = new AntlrSpecFactory().create(this, grammarFiles, sourceDirectorySet);
-        File projectDir = getServices().get(ProjectLayout.class).getProjectDirectory().getAsFile();
+        File projectDir = getProjectLayout().getProjectDirectory().getAsFile();
         AntlrResult result = manager.runWorker(projectDir, getWorkerProcessBuilderFactory(), getAntlrClasspath(), spec);
         evaluate(result);
     }

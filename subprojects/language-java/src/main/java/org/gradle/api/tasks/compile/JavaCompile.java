@@ -109,7 +109,7 @@ public class JavaCompile extends AbstractCompile {
     @Deprecated
     @Internal
     protected FileTree getSources() {
-        return getServices().get(ProjectLayout.class).files().getAsFileTree();
+        return getProjectLayout().files().getAsFileTree();
     }
 
     /**
@@ -197,6 +197,11 @@ public class JavaCompile extends AbstractCompile {
         throw new UnsupportedOperationException("Decorator takes care of injection");
     }
 
+    @Inject
+    protected ProjectLayout getProjectLayout() {
+        throw new UnsupportedOperationException();
+    }
+
     private CleaningJavaCompiler<JavaCompileSpec> createCompiler(JavaCompileSpec spec) {
         Compiler<JavaCompileSpec> javaCompiler = CompilerUtil.castCompiler(((JavaToolChainInternal) getToolChain()).select(getPlatform()).newCompiler(spec.getClass()));
         return new CleaningJavaCompiler<>(javaCompiler, getOutputs(), getDeleter());
@@ -215,7 +220,7 @@ public class JavaCompile extends AbstractCompile {
     private DefaultJavaCompileSpec createSpec() {
         final DefaultJavaCompileSpec spec = new DefaultJavaCompileSpecFactory(compileOptions).create();
         spec.setDestinationDir(getDestinationDirectory().getAsFile().get());
-        spec.setWorkingDir(getServices().get(ProjectLayout.class).getProjectDirectory().getAsFile());
+        spec.setWorkingDir(getProjectLayout().getProjectDirectory().getAsFile());
         spec.setTempDir(getTemporaryDir());
         spec.setCompileClasspath(ImmutableList.copyOf(getClasspath()));
         spec.setAnnotationProcessorPath(compileOptions.getAnnotationProcessorPath() == null ? ImmutableList.of() : ImmutableList.copyOf(compileOptions.getAnnotationProcessorPath()));

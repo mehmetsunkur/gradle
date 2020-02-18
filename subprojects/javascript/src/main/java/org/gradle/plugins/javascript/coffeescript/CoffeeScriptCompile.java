@@ -54,6 +54,16 @@ public class CoffeeScriptCompile extends SourceTask {
         throw new UnsupportedOperationException();
     }
 
+    @Inject
+    protected ProjectLayout getProjectLayout() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Inject
+    protected ObjectFactory getObjectFactory() {
+        throw new UnsupportedOperationException();
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -66,7 +76,7 @@ public class CoffeeScriptCompile extends SourceTask {
     @PathSensitive(PathSensitivity.RELATIVE)
     @InputFiles
     public FileCollection getCoffeeScriptJs() {
-        return getServices().get(ObjectFactory.class).fileCollection().from(coffeeScriptJs);
+        return getObjectFactory().fileCollection().from(coffeeScriptJs);
     }
 
     /**
@@ -84,7 +94,7 @@ public class CoffeeScriptCompile extends SourceTask {
 
     @Classpath
     public FileCollection getRhinoClasspath() {
-        return getServices().get(ObjectFactory.class).fileCollection().from(rhinoClasspath);
+        return getObjectFactory().fileCollection().from(rhinoClasspath);
     }
 
     /**
@@ -141,7 +151,7 @@ public class CoffeeScriptCompile extends SourceTask {
         spec.setSource(getSource());
         spec.setOptions(getOptions());
 
-        File projectDir = getServices().get(ProjectLayout.class).getProjectDirectory().getAsFile();
+        File projectDir = getProjectLayout().getProjectDirectory().getAsFile();
         CoffeeScriptCompiler compiler = new RhinoCoffeeScriptCompiler(handleFactory, getRhinoClasspath(), logLevel, projectDir);
 
         setDidWork(compiler.compile(spec).getDidWork());

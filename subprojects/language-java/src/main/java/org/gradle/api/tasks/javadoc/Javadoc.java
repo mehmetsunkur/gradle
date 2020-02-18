@@ -158,7 +158,7 @@ public class Javadoc extends SourceTask {
         spec.setExecutable(getExecutable());
         spec.setOptions(options);
         spec.setIgnoreFailures(!isFailOnError());
-        spec.setWorkingDir(getServices().get(ProjectLayout.class).getProjectDirectory().getAsFile());
+        spec.setWorkingDir(getProjectLayout().getProjectDirectory().getAsFile());
         spec.setOptionsFile(getOptionsFile());
 
         Compiler<JavadocSpec> generator = ((JavaToolChainInternal) getToolChain()).select(getPlatform()).newCompiler(JavadocSpec.class);
@@ -365,5 +365,10 @@ public class Javadoc extends SourceTask {
     @Inject
     protected Deleter getDeleter() {
         throw new UnsupportedOperationException("Decorator takes care of injection");
+    }
+
+    @Inject
+    protected ProjectLayout getProjectLayout() {
+        throw new UnsupportedOperationException();
     }
 }

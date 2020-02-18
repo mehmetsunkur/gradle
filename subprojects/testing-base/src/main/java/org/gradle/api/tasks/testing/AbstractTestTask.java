@@ -156,6 +156,11 @@ public abstract class AbstractTestTask extends ConventionTask implements Verific
         throw new UnsupportedOperationException();
     }
 
+    @Inject
+    protected FileSystemOperations getFileSystemOperations() {
+        throw new UnsupportedOperationException();
+    }
+
     /**
      * Creates test executer. For internal use only.
      *
@@ -436,14 +441,13 @@ public abstract class AbstractTestTask extends ConventionTask implements Verific
 
         TestExecutionSpec executionSpec = createTestExecutionSpec();
 
-        FileSystemOperations fileSystemOperations = getServices().get(FileSystemOperations.class);
-        fileSystemOperations.delete(new Action<DeleteSpec>() {
+        getFileSystemOperations().delete(new Action<DeleteSpec>() {
             @Override
             public void execute(DeleteSpec deleteSpec) {
                 deleteSpec.delete(binaryResultsDirectory);
             }
         });
-        fileSystemOperations.mkdir(binaryResultsDirectory.get());
+        getFileSystemOperations().mkdir(binaryResultsDirectory.get());
         File binaryResultsDir = getBinResultsDir();
 
         Map<String, TestClassResult> results = new HashMap<String, TestClassResult>();

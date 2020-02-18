@@ -54,6 +54,11 @@ public class TestReport extends DefaultTask {
         throw new UnsupportedOperationException();
     }
 
+    @Inject
+    protected ObjectFactory getObjectFactory() {
+        throw new UnsupportedOperationException();
+    }
+
     /**
      * Returns the directory to write the HTML report to.
      */
@@ -83,7 +88,7 @@ public class TestReport extends DefaultTask {
     }
 
     private void addTo(Object result, UnionFileCollection dirs) {
-        ObjectFactory objects = getServices().get(ObjectFactory.class);
+        ObjectFactory objects = getObjectFactory();
         if (result instanceof Test) {
             Test test = (Test) result;
             dirs.addToUnion(objects.fileCollection().from(test.getBinaryResultsDirectory()).builtBy(test));

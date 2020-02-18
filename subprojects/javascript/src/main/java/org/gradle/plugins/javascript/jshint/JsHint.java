@@ -62,6 +62,11 @@ public class JsHint extends SourceTask {
         throw new UnsupportedOperationException();
     }
 
+    @Inject
+    protected ObjectFactory getObjectFactory() {
+        throw new UnsupportedOperationException();
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -73,7 +78,7 @@ public class JsHint extends SourceTask {
 
     @Classpath
     public FileCollection getRhinoClasspath() {
-        return getServices().get(ObjectFactory.class).fileCollection().from(rhinoClasspath);
+        return getObjectFactory().fileCollection().from(rhinoClasspath);
     }
 
     /**
@@ -92,7 +97,7 @@ public class JsHint extends SourceTask {
     @PathSensitive(PathSensitivity.RELATIVE)
     @InputFiles
     public FileCollection getJsHint() {
-        return getServices().get(ObjectFactory.class).fileCollection().from(jsHint);
+        return getObjectFactory().fileCollection().from(jsHint);
     }
 
     /**
