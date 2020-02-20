@@ -22,7 +22,6 @@ import com.google.common.collect.Lists;
 import groovy.lang.Closure;
 import org.gradle.api.Action;
 import org.gradle.api.GradleException;
-import org.gradle.api.file.DeleteSpec;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.file.FileSystemOperations;
 import org.gradle.api.internal.ConventionTask;
@@ -441,13 +440,9 @@ public abstract class AbstractTestTask extends ConventionTask implements Verific
 
         TestExecutionSpec executionSpec = createTestExecutionSpec();
 
-        getFileSystemOperations().delete(new Action<DeleteSpec>() {
-            @Override
-            public void execute(DeleteSpec deleteSpec) {
-                deleteSpec.delete(binaryResultsDirectory);
-            }
-        });
-        getFileSystemOperations().mkdir(binaryResultsDirectory.get());
+        FileSystemOperations fs = getFileSystemOperations();
+        fs.delete(binaryResultsDirectory);
+        fs.mkdir(binaryResultsDirectory);
         File binaryResultsDir = getBinResultsDir();
 
         Map<String, TestClassResult> results = new HashMap<String, TestClassResult>();
