@@ -25,19 +25,16 @@ import org.gradle.api.internal.file.FileTreeInternal;
 import org.gradle.api.specs.Spec;
 import org.gradle.api.tasks.util.PatternFilterable;
 import org.gradle.api.tasks.util.PatternSet;
-import org.gradle.internal.Factory;
 
 import java.io.File;
 
 public class FilteredMinimalFileTree implements MinimalFileTree, FileSystemMirroringFileTree, PatternFilterableFileTree {
     private final PatternSet patterns;
     private final FileSystemMirroringFileTree tree;
-    private final Factory<PatternSet> patternSetFactory;
 
-    public FilteredMinimalFileTree(PatternSet patterns, FileSystemMirroringFileTree tree, Factory<PatternSet> patternSetFactory) {
+    public FilteredMinimalFileTree(PatternSet patterns, FileSystemMirroringFileTree tree) {
         this.patterns = patterns;
         this.tree = tree;
-        this.patternSetFactory = patternSetFactory;
     }
 
     @Override
@@ -54,7 +51,7 @@ public class FilteredMinimalFileTree implements MinimalFileTree, FileSystemMirro
     public MinimalFileTree filter(PatternFilterable patterns) {
         PatternSet filter = this.patterns.intersect();
         filter.copyFrom(patterns);
-        return new FilteredMinimalFileTree(filter, tree, patternSetFactory);
+        return new FilteredMinimalFileTree(filter, tree);
     }
 
     @Override

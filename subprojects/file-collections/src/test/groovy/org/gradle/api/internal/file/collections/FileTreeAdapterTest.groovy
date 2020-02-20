@@ -16,7 +16,6 @@
 package org.gradle.api.internal.file.collections
 
 import org.gradle.api.Buildable
-import org.gradle.api.file.FileVisitDetails
 import org.gradle.api.file.FileVisitor
 import org.gradle.api.internal.tasks.TaskDependencyResolveContext
 import org.gradle.api.tasks.util.PatternFilterable
@@ -58,49 +57,6 @@ class FileTreeAdapterTest extends Specification {
 
         then:
         1 * context.add(tree)
-        0 * _._
-    }
-
-    def getAsFileTreesConvertsMirroringFileTreeByVisitingAllElementsAndReturningLocalMirror() {
-        FileSystemMirroringFileTree tree = Mock()
-        FileTreeAdapter adapter = new FileTreeAdapter(tree)
-        DirectoryFileTreeFactory directoryFileTreeFactory = new DefaultDirectoryFileTreeFactory()
-        DirectoryFileTree mirror = directoryFileTreeFactory.create(new File('a'))
-
-        when:
-        def result = adapter.asFileTrees
-
-        then:
-        result == [mirror]
-        1 * tree.visit(!null) >> { it[0].visitFile({} as FileVisitDetails) }
-        1 * tree.mirror >> mirror
-        0 * _._
-    }
-
-    def getAsFileTreesConvertsEmptyMirroringTree() {
-        FileSystemMirroringFileTree tree = Mock()
-        FileTreeAdapter adapter = new FileTreeAdapter(tree)
-
-        when:
-        def result = adapter.asFileTrees
-
-        then:
-        result == []
-        1 * tree.visit(!null)
-        0 * _._
-    }
-
-    def getAsFileTreesConvertsLocalFileTree() {
-        LocalFileTree tree = Mock()
-        DirectoryFileTree contents = Mock()
-        FileTreeAdapter adapter = new FileTreeAdapter(tree)
-
-        when:
-        def result = adapter.asFileTrees
-
-        then:
-        result == [contents]
-        1 * tree.localContents >> [contents]
         0 * _._
     }
 
