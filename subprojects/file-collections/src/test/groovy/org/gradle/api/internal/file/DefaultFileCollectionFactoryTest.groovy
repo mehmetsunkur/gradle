@@ -22,6 +22,7 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileVisitDetails
 import org.gradle.api.file.FileVisitor
 import org.gradle.api.internal.file.collections.DirectoryFileTreeFactory
+import org.gradle.api.internal.file.collections.FileSystemMirroringFileTree
 import org.gradle.api.internal.file.collections.MinimalFileSet
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.internal.tasks.TaskDependencyFactory
@@ -359,7 +360,7 @@ class DefaultFileCollectionFactoryTest extends Specification {
         }
 
         @Override
-        void visitGenericFileTree(FileTreeInternal fileTree) {
+        void visitGenericFileTree(FileTreeInternal fileTree, FileSystemMirroringFileTree sourceTree) {
             Assert.fail()
         }
 
@@ -369,7 +370,7 @@ class DefaultFileCollectionFactoryTest extends Specification {
         }
 
         @Override
-        void visitFileTreeBackedByFile(File file, FileTreeInternal fileTree) {
+        void visitFileTreeBackedByFile(File file, FileTreeInternal fileTree, FileSystemMirroringFileTree sourceTree) {
             Assert.fail()
         }
     }

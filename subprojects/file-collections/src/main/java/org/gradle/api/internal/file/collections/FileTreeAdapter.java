@@ -102,8 +102,10 @@ public class FileTreeAdapter extends AbstractFileTree implements FileCollectionC
         if (tree instanceof PatternFilterableFileTree) {
             PatternFilterableFileTree filterableTree = (PatternFilterableFileTree) tree;
             return new FileTreeAdapter(filterableTree.filter(patterns), patternSetFactory);
+        } else if (tree instanceof FileSystemMirroringFileTree) {
+            return new FileTreeAdapter(new FilteredMinimalFileTree((PatternSet) patterns, (FileSystemMirroringFileTree) tree, patternSetFactory), patternSetFactory);
         }
-        return super.matching(patterns);
+        throw new UnsupportedOperationException(String.format("Do not know how to filter %s.", tree));
     }
 
     @Override

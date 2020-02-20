@@ -180,6 +180,11 @@ class AbstractFileTreeTest extends Specification {
             context.add(builtBy)
         }
 
+        @Override
+        FileTree matching(PatternFilterable patterns) {
+            throw new UnsupportedOperationException()
+        }
+
         FileTree visit(FileVisitor visitor) {
             contents.each { FileVisitDetails details ->
                 visitor.visitFile(details)

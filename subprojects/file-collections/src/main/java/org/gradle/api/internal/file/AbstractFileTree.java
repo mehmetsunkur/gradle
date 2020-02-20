@@ -20,11 +20,8 @@ import org.codehaus.groovy.runtime.DefaultGroovyMethods;
 import org.gradle.api.Action;
 import org.gradle.api.file.EmptyFileVisitor;
 import org.gradle.api.file.FileTree;
-import org.gradle.api.file.FileTreeElement;
 import org.gradle.api.file.FileVisitDetails;
 import org.gradle.api.file.FileVisitor;
-import org.gradle.api.internal.tasks.TaskDependencyResolveContext;
-import org.gradle.api.specs.Spec;
 import org.gradle.api.tasks.util.PatternFilterable;
 import org.gradle.api.tasks.util.PatternSet;
 import org.gradle.internal.Cast;
@@ -83,12 +80,6 @@ public abstract class AbstractFileTree extends AbstractFileCollection implements
         PatternSet patternSet = patternSetFactory.create();
         filterConfigAction.execute(patternSet);
         return matching(patternSet);
-    }
-
-    @Override
-    public FileTree matching(PatternFilterable patterns) {
-        PatternSet patternSet = (PatternSet) patterns;
-        return new FilteredFileTreeImpl(this, patternSet.getAsSpec(), patternSetFactory);
     }
 
     public Map<String, File> getAsMap() {
@@ -160,59 +151,5 @@ public abstract class AbstractFileTree extends AbstractFileCollection implements
                 visitor.execute(fileDetails);
             }
         });
-    }
-
-    @Override
-    public void visitStructure(FileCollectionStructureVisitor visitor) {
-        if (visitor.prepareForVisit(OTHER) != FileCollectionStructureVisitor.VisitType.NoContents) {
-            visitor.visitGenericFileTree(this);
-        }
-    }
-
-    private static class FilteredFileTreeImpl extends AbstractFileTree {
-        private final AbstractFileTree fileTree;
-        private final Spec<FileTreeElement> spec;
-
-        public FilteredFileTreeImpl(AbstractFileTree fileTree, Spec<FileTreeElement> spec, Factory<PatternSet> patternSetFactory) {
-            super(patternSetFactory);
-            this.fileTree = fileTree;
-            this.spec = spec;
-        }
-
-        @Override
-        public String getDisplayName() {
-            return fileTree.getDisplayName();
-        }
-
-        @Override
-        public void visitDependencies(TaskDependencyResolveContext context) {
-            context.add(fileTree);
-        }
-
-        @Override
-        public FileTree visit(final FileVisitor visitor) {
-            fileTree.visit(new FileVisitor() {
-                @Override
-                public void visitDir(FileVisitDetails dirDetails) {
-                    if (spec.isSatisfiedBy(dirDetails)) {
-                        visitor.visitDir(dirDetails);
-                    }
-                }
-
-                @Override
-                public void visitFile(FileVisitDetails fileDetails) {
-                    if (spec.isSatisfiedBy(fileDetails)) {
-                        visitor.visitFile(fileDetails);
-                    }
-                }
-            });
-            return this;
-        }
-
-        @Override
-        public void visitStructure(FileCollectionStructureVisitor visitor) {
-            // TODO: should consider the filter
-            fileTree.visitStructure(visitor);
-        }
     }
 }
