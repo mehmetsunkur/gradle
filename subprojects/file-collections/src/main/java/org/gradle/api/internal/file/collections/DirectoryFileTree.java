@@ -93,14 +93,6 @@ public class DirectoryFileTree implements MinimalFileTree, PatternFilterableFile
     }
 
     @Override
-    public Collection<DirectoryTree> getLocalContents() {
-        if (dir.isFile()) {
-            return Collections.singletonList(new FileBackedDirectoryFileTree(dir));
-        }
-        return Collections.singletonList(this);
-    }
-
-    @Override
     public DirectoryFileTree filter(PatternFilterable patterns) {
         PatternSet patternSet = this.patternSet.intersect();
         patternSet.copyFrom(patterns);

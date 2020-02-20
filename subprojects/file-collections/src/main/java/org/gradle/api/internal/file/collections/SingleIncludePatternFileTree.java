@@ -78,11 +78,6 @@ public class SingleIncludePatternFileTree implements MinimalFileTree, LocalFileT
     }
 
     @Override
-    public Collection<DirectoryTree> getLocalContents() {
-        return Collections.singletonList(this);
-    }
-
-    @Override
     public void visitStructure(FileCollectionStructureVisitor visitor, FileTreeInternal owner) {
         visitor.visitFileTree(baseDir, getPatterns(), owner);
     }

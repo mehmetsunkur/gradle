@@ -98,27 +98,6 @@ public abstract class AbstractFileTree extends AbstractFileCollection implements
         new AntFileTreeBuilder(getAsMap()).addToAntBuilder(builder, nodeName);
     }
 
-    /**
-     * Visits all the files of this tree.
-     */
-    protected boolean visitAll() {
-        final MutableBoolean hasContent = new MutableBoolean();
-        visit(new FileVisitor() {
-            @Override
-            public void visitDir(FileVisitDetails dirDetails) {
-                dirDetails.getFile();
-                hasContent.set(true);
-            }
-
-            @Override
-            public void visitFile(FileVisitDetails fileDetails) {
-                fileDetails.getFile();
-                hasContent.set(true);
-            }
-        });
-        return hasContent.get();
-    }
-
     @Override
     public FileTree getAsFileTree() {
         return this;
