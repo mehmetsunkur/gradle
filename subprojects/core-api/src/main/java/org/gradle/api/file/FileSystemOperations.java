@@ -59,12 +59,21 @@ public interface FileSystemOperations {
     WorkResult delete(Action<? super DeleteSpec> action);
 
     /**
-     * Creates a directory.
+     * Deletes files and directories.
      *
-     * @param directory the directory to create
-     * @return the created directory
+     * This will not follow symlinks. If you need to follow symlinks too use {@link #delete(Action)}.
      *
+     * @param paths Any type of object accepted by {@link org.gradle.api.Project#files(Object...)}
+     * @return {@link WorkResult} that can be used to check if delete did any work.
      * @since 6.3
      */
-    Directory mkdir(Directory directory);
+    WorkResult delete(Object... paths);
+
+    /**
+     * Creates a directory and returns a {@link Directory} pointing to it.
+     *
+     * @param directory the directory to create. Any type of object accepted by {@link org.gradle.api.Project#files(Object...)}
+     * @since 6.3
+     */
+    void mkdir(Object directory);
 }
