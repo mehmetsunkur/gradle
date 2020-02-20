@@ -19,6 +19,7 @@ import org.gradle.api.Buildable
 import org.gradle.api.file.FileVisitor
 import org.gradle.api.internal.tasks.TaskDependencyResolveContext
 import org.gradle.api.tasks.util.PatternFilterable
+import org.gradle.api.tasks.util.PatternSet
 import org.gradle.util.UsesNativeServices
 import spock.lang.Specification
 
@@ -97,6 +98,21 @@ class FileTreeAdapterTest extends Specification {
         filteredAdapter instanceof FileTreeAdapter
         filteredAdapter.tree == filtered
         1 * tree.filter(filter) >> filtered
+    }
+
+    def matchingWrapsTargetTreeWhenItDoesNotImplementPatternFilterableFileTree() {
+        FileSystemMirroringFileTree tree = Mock()
+        PatternSet filter = Mock()
+        FileTreeAdapter adapter = new FileTreeAdapter(tree)
+
+        when:
+        def filteredAdapter = adapter.matching(filter)
+
+        then:
+        filteredAdapter instanceof FileTreeAdapter
+        filteredAdapter.tree instanceof FilteredMinimalFileTree
+        filteredAdapter.tree.tree == tree
+        filteredAdapter.tree.patterns == filter
     }
 
     def containsDelegatesToTargetTreeWhenItImplementsRandomAccessFileCollection() {

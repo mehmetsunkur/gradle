@@ -88,7 +88,7 @@ trait TasksWithInputsAndOutputs {
                         project.delete(dir)
                         dir.mkdirs()
                         names.get().forEach {
-                            new File(dir, it).text = content
+                            new File(dir, it).text = "\$it=\$content"
                         }
                     }
                 }
