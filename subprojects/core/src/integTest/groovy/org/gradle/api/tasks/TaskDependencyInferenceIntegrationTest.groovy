@@ -554,7 +554,7 @@ The following types/formats are supported:
 
         then:
         result.assertTasksExecuted(":a", ":b")
-        file("out.txt").text == "a.txt=content,c.txt=content"
+        file("out.txt").text == "content,content"
     }
 
     def "input file collection containing filtered tree containing task output implies dependency on the task"() {
@@ -577,7 +577,7 @@ The following types/formats are supported:
 
         then:
         result.assertTasksExecuted(":a", ":b")
-        file("out.txt").text == "a.txt=content,c.txt=content"
+        file("out.txt").text == "content,content"
     }
 
     def "input file property with value of mapped task provider implies dependency on a specific output of the task"() {
