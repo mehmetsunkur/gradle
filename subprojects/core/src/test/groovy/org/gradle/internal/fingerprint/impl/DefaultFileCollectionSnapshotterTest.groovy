@@ -44,7 +44,7 @@ class DefaultFileCollectionSnapshotterTest extends Specification {
     @Rule
     TestNameTestDirectoryProvider tmpDir = new TestNameTestDirectoryProvider()
     def snapshotter = TestFiles.fileCollectionSnapshotter()
-    def noopGenerationListener = {} as GeneratedSingletonFileTree.FileGenerationListener
+    def noopGenerationListener = {} as Action
 
     def "snapshots a tree with file as root as RegularFileSnapshot"() {
         given:
