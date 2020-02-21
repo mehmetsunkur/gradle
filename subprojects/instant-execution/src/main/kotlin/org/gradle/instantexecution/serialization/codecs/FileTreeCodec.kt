@@ -39,6 +39,7 @@ import org.gradle.instantexecution.serialization.encodePreservingIdentityOf
 import org.gradle.instantexecution.serialization.ownerService
 import org.gradle.instantexecution.serialization.readNonNull
 import org.gradle.internal.Factory
+import org.gradle.internal.nativeintegration.filesystem.FileSystem
 import java.io.File
 import java.nio.file.Files
 
@@ -76,7 +77,7 @@ class GeneratedTreeSpec(val file: File) : FileTreeSpec()
 
 
 private
-class DummyGeneratedFileTree(file: File) : GeneratedSingletonFileTree(
+class DummyGeneratedFileTree(file: File, fileSystem: FileSystem) : GeneratedSingletonFileTree(
     { file.parentFile },
     file.name,
     {},
@@ -88,7 +89,8 @@ class DummyGeneratedFileTree(file: File) : GeneratedSingletonFileTree(
             file.writeText("")
         }
         Files.copy(file.toPath(), outStr)
-    }
+    },
+    fileSystem
 ) {
     override fun getDisplayName(): String {
         return "generated ${file.name}"
@@ -99,7 +101,8 @@ class DummyGeneratedFileTree(file: File) : GeneratedSingletonFileTree(
 internal
 class FileTreeCodec(
     private val directoryFileTreeFactory: DirectoryFileTreeFactory,
-    private val patternSetFactory: Factory<PatternSet>
+    private val patternSetFactory: Factory<PatternSet>,
+    private val fileSystem: FileSystem
 ) : Codec<FileTreeInternal> {
 
     override suspend fun WriteContext.encode(value: FileTreeInternal) {
@@ -117,7 +120,7 @@ class FileTreeCodec(
                         spec.roots.map {
                             when (it) {
                                 is DirectoryTreeSpec -> FileTreeAdapter(directoryFileTreeFactory.create(it.file, it.patterns))
-                                is GeneratedTreeSpec -> FileTreeAdapter(DummyGeneratedFileTree(it.file))
+                                is GeneratedTreeSpec -> FileTreeAdapter(DummyGeneratedFileTree(it.file, fileSystem))
                                 is ZipTreeSpec -> ownerService<FileOperations>().zipTree(it.file) as FileTreeInternal
                                 is TarTreeSpec -> ownerService<FileOperations>().tarTree(it.file) as FileTreeInternal
                             }
