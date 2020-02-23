@@ -137,7 +137,7 @@ class FileTreeCodec(
     fun rootSpecOf(value: FileTreeInternal): FileTreeRootSpec {
         // Optimize a common case, where fileCollection.asFileTree.matching(emptyPatterns) is used, eg in SourceTask and in CopySpec
         // TODO - it would be better to apply this while visiting the tree structure, so that the same short circuiting is applied everywhere
-        //   Would needs some rework of the visiting interfaces
+        //   Would need some rework of the visiting interfaces
         val effectiveTree = if (value is FilteredFileTree && value.patterns.isEmpty) {
             // No filters are applied, so discard the filtering tree
             value.tree
@@ -160,18 +160,17 @@ class FileTreeCodec(
 
         override fun visitCollection(source: FileCollectionInternal.Source, contents: Iterable<File>) = throw UnsupportedOperationException()
 
-        override fun visitGenericFileTree(fileTree: FileTreeInternal, sourceTree: FileSystemMirroringFileTree) = throw UnsupportedOperationException()
+        override fun visitGenericFileTree(fileTree: FileTreeInternal, sourceTree: FileSystemMirroringFileTree) {
+            if (sourceTree is GeneratedSingletonFileTree) {
+                // TODO - should generate the file into some persistent cache dir (eg the instant execution cache dir) and/or persist enough of the generator to recreate the file
+                // For example, for the Jar task persist the effective manifest (not all the stuff that produces it) and an action bean to generate the file from this
+                roots.add(GeneratedTreeSpec(sourceTree.file))
+            } else {
+                throw UnsupportedOperationException()
+            }
+        }
 
         override fun visitFileTree(root: File, patterns: PatternSet, fileTree: FileTreeInternal) {
-            if (fileTree is FileTreeAdapter) {
-                val tree = fileTree.tree
-                if (tree is GeneratedSingletonFileTree) {
-                    // TODO - should generate the file into some persistent cache dir (eg the instant execution cache dir) and/or persist enough of the generator to recreate the file
-                    // For example, for the Jar task persist the effective manifest (not all the stuff that produces it) and an action bean to generate the file from this
-                    roots.add(GeneratedTreeSpec(tree.file))
-                    return
-                }
-            }
             roots.add(DirectoryTreeSpec(root, patterns))
         }
 
