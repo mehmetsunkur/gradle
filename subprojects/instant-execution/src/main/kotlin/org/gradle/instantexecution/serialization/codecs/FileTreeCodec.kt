@@ -29,6 +29,7 @@ import org.gradle.api.internal.file.archive.ZipFileTree
 import org.gradle.api.internal.file.collections.DirectoryFileTreeFactory
 import org.gradle.api.internal.file.collections.FileSystemMirroringFileTree
 import org.gradle.api.internal.file.collections.FileTreeAdapter
+import org.gradle.api.internal.file.collections.FilteredMinimalFileTree
 import org.gradle.api.internal.file.collections.GeneratedSingletonFileTree
 import org.gradle.api.tasks.util.PatternSet
 import org.gradle.instantexecution.serialization.Codec
@@ -160,30 +161,33 @@ class FileTreeCodec(
 
         override fun visitCollection(source: FileCollectionInternal.Source, contents: Iterable<File>) = throw UnsupportedOperationException()
 
-        override fun visitGenericFileTree(fileTree: FileTreeInternal, sourceTree: FileSystemMirroringFileTree) {
-            if (sourceTree is GeneratedSingletonFileTree) {
-                // TODO - should generate the file into some persistent cache dir (eg the instant execution cache dir) and/or persist enough of the generator to recreate the file
-                // For example, for the Jar task persist the effective manifest (not all the stuff that produces it) and an action bean to generate the file from this
-                roots.add(GeneratedTreeSpec(sourceTree.file))
-            } else {
-                throw UnsupportedOperationException()
-            }
-        }
+        override fun visitGenericFileTree(fileTree: FileTreeInternal, sourceTree: FileSystemMirroringFileTree) = throw UnsupportedOperationException()
 
         override fun visitFileTree(root: File, patterns: PatternSet, fileTree: FileTreeInternal) {
+            if (fileTree is FileTreeAdapter) {
+                val sourceTree = fileTree.tree
+                if (sourceTree is GeneratedSingletonFileTree) {
+                    // TODO - should generate the file into some persistent cache dir (eg the instant execution cache dir) and/or persist enough of the generator to recreate the file
+                    // For example, for the Jar task persist the effective manifest (not all the stuff that produces it) and an action bean to generate the file from this
+                    roots.add(GeneratedTreeSpec(sourceTree.file))
+                    return
+                }
+            }
             roots.add(DirectoryTreeSpec(root, patterns))
         }
 
         override fun visitFileTreeBackedByFile(file: File, fileTree: FileTreeInternal, sourceTree: FileSystemMirroringFileTree) {
-            if (sourceTree is ZipFileTree && sourceTree.backingFile != null) {
-                roots.add(ZipTreeSpec(sourceTree.backingFile!!))
-                return
-            } else if (sourceTree is TarFileTree && sourceTree.backingFile != null) {
-                roots.add(TarTreeSpec(sourceTree.backingFile!!))
-                return
-            } else {
-                throw UnsupportedOperationException()
-            }
+            roots.add(toSpec(sourceTree))
         }
+
+        private fun toSpec(tree: FileSystemMirroringFileTree): FileTreeSpec =
+            when {
+                // TODO - deal with tree that is not backed by a file
+                tree is ZipFileTree && tree.backingFile != null -> ZipTreeSpec(tree.backingFile!!)
+                tree is TarFileTree && tree.backingFile != null -> TarTreeSpec(tree.backingFile!!)
+                // TODO - capture the patterns
+                tree is FilteredMinimalFileTree -> toSpec(tree.tree)
+                else -> throw UnsupportedOperationException()
+            }
     }
 }

@@ -22,7 +22,6 @@ import org.gradle.api.internal.file.FileCollectionInternal
 import org.gradle.api.internal.file.TemporaryFileProvider
 import org.gradle.api.internal.file.TestFiles
 import org.gradle.api.internal.file.collections.FileTreeAdapter
-import org.gradle.api.internal.file.collections.GeneratedSingletonFileTree
 import org.gradle.api.resources.MissingResourceException
 import org.gradle.api.resources.ReadableResource
 import org.gradle.api.resources.ResourceException
@@ -185,7 +184,7 @@ class DefaultFileCollectionSnapshotterTest extends Specification {
         }
 
         when:
-        def tree = new FileTreeAdapter(new GeneratedSingletonFileTree(factory, file.name, noopGenerationListener, action))
+        def tree = TestFiles.fileCollectionFactory().generated(factory, file.name, noopGenerationListener, action)
 
         then:
         assertSingleFileTree(tree)

@@ -23,9 +23,11 @@ import org.gradle.api.internal.file.FileCollectionStructureVisitor
 import org.gradle.api.internal.file.FileTreeInternal
 import org.gradle.internal.nativeintegration.filesystem.FileSystem
 import org.gradle.test.fixtures.file.TestNameTestDirectoryProvider
+import org.gradle.util.UsesNativeServices
 import org.junit.Rule
 import spock.lang.Specification
 
+@UsesNativeServices
 class GeneratedSingletonFileTreeSpec extends Specification {
     @Rule
     TestNameTestDirectoryProvider tmpDir = new TestNameTestDirectoryProvider()
@@ -76,7 +78,7 @@ class GeneratedSingletonFileTreeSpec extends Specification {
         0 * _
     }
 
-    def "visiting structure generates content when listener requests it"() {
+    def "visiting structure eagerly generates content when listener requests content but does not use it"() {
         def owner = Stub(FileTreeInternal)
         def visitor = Mock(FileCollectionStructureVisitor)
         def tmpDir = tmpDir.createDir("dir")
@@ -91,13 +93,13 @@ class GeneratedSingletonFileTreeSpec extends Specification {
 
         then:
         1 * visitor.prepareForVisit(fileTree) >> FileCollectionStructureVisitor.VisitType.Visit
-        1 * contentWriter.execute(_) >> { OutputStream outputStream ->
-            outputStream << "contents!"
-        }
-        1 * visitor.visitCollection(fileTree, _) >> { tree, files ->
-            assert files == [generatedFile]
+        1 * visitor.visitFileTree(generatedFile, _, owner) >> { d, p, t ->
+            assert p.isEmpty()
             assert generatedFile.isFile()
             assert generatedFile.text == "contents!"
+        }
+        1 * contentWriter.execute(_) >> { OutputStream outputStream ->
+            outputStream << "contents!"
         }
         0 * _
     }

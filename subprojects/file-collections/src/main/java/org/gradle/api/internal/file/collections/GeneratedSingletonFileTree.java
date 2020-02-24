@@ -87,7 +87,7 @@ public class GeneratedSingletonFileTree implements FileSystemMirroringFileTree, 
             // Visit metadata but not contents
             visitor.visitCollection(this, Collections.emptyList());
         } else {
-            visitor.visitGenericFileTree(owner, this);
+            visitor.visitFileTree(getFile(), new PatternSet(), owner);
         }
     }
 
