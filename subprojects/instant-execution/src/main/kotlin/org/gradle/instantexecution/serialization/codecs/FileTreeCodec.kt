@@ -180,7 +180,8 @@ class FileTreeCodec(
             roots.add(toSpec(sourceTree))
         }
 
-        private fun toSpec(tree: FileSystemMirroringFileTree): FileTreeSpec =
+        private
+        fun toSpec(tree: FileSystemMirroringFileTree): FileTreeSpec =
             when {
                 // TODO - deal with tree that is not backed by a file
                 tree is ZipFileTree && tree.backingFile != null -> ZipTreeSpec(tree.backingFile!!)
