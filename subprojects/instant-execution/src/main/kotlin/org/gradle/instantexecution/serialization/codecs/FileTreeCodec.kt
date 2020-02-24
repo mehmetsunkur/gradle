@@ -16,6 +16,8 @@
 
 package org.gradle.instantexecution.serialization.codecs
 
+import org.gradle.api.file.FileVisitDetails
+import org.gradle.api.file.FileVisitor
 import org.gradle.api.internal.file.AbstractFileCollection
 import org.gradle.api.internal.file.DefaultCompositeFileTree
 import org.gradle.api.internal.file.FileCollectionBackFileTree
@@ -161,7 +163,18 @@ class FileTreeCodec(
 
         override fun visitCollection(source: FileCollectionInternal.Source, contents: Iterable<File>) = throw UnsupportedOperationException()
 
-        override fun visitGenericFileTree(fileTree: FileTreeInternal, sourceTree: FileSystemMirroringFileTree) = throw UnsupportedOperationException()
+        override fun visitGenericFileTree(fileTree: FileTreeInternal, sourceTree: FileSystemMirroringFileTree) {
+            // Visit the contents to create the mirror
+            sourceTree.visit(object : FileVisitor {
+                override fun visitFile(fileDetails: FileVisitDetails) {
+                }
+
+                override fun visitDir(dirDetails: FileVisitDetails) {
+                }
+            })
+            val mirror = sourceTree.mirror
+            roots.add(DirectoryTreeSpec(mirror.dir, mirror.patterns))
+        }
 
         override fun visitFileTree(root: File, patterns: PatternSet, fileTree: FileTreeInternal) {
             if (fileTree is FileTreeAdapter) {
